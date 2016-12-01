@@ -20,6 +20,18 @@
       // TODO: add support for retrieving compressed pixel data
       var storedPixelData;
       if(image.instance.bitsAllocated === 16) {
+        // if the address is not word-aligned a new buffer needs to be created
+        // in order to comply with underlying hardware constraints.
+        // https://en.wikipedia.org/wiki/Data_structure_alignment
+        if ((result.offset & 1) !== 0) {
+          var unalignedResult = result;
+          var unalignedBuffer = new Uint8Array(unalignedResult.arrayBuffer, unalignedResult.offset, unalignedResult.length);
+          var alignedBuffer = new Uint8Array(unalignedBuffer);
+          result = $.extend({}, unalignedResult);
+          result.offset = 0;
+          result.length = unalignedResult.length;
+          result.arrayBuffer = alignedBuffer.buffer;
+        }
         if(image.instance.pixelRepresentation === 0) {
           storedPixelData = new Uint16Array(result.arrayBuffer, result.offset, result.length / 2);
         } else {

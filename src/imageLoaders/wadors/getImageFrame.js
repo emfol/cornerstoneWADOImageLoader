@@ -58,7 +58,7 @@
           if(!boundary) {
             deferred.reject('invalid response - no boundary marker')
           }
-          var offset = tokenIndex + 4; // skip over the \n\r\n
+          var offset = tokenIndex + 3; // skip over the \n\r\n
 
           // find the terminal boundary marker
           var endIndex = cornerstoneWADOImageLoader.internal.findIndexOfString(response, boundary, offset);
