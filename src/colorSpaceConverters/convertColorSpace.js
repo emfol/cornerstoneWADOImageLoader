@@ -20,11 +20,20 @@
     }
   }
 
-  function convertColorSpace(canvas, dataSet, imageFrame) {
+  function convertColorSpace(canvas, dataSet, imageFrame, metadata) {
+
+    var height, width, photometricInterpretation;
+
     // extract the fields we need
-    var height = dataSet.uint16('x00280010');
-    var width = dataSet.uint16('x00280011');
-    var photometricInterpretation = dataSet.string('x00280004');
+    if (dataSet === null && metadata !== void 0) {
+      height = metadata.rows;
+      width = metadata.columns;
+      photometricInterpretation = metadata.photometricInterpretation;
+    } else {
+      height = dataSet.uint16('x00280010');
+      width = dataSet.uint16('x00280011');
+      photometricInterpretation = dataSet.string('x00280004');
+    }
 
     // setup the canvas context
     canvas.height = height;
@@ -49,7 +58,7 @@
       }
       else if( photometricInterpretation === "PALETTE COLOR" )
       {
-        cornerstoneWADOImageLoader.convertPALETTECOLOR(imageFrame, imageData.data, dataSet );
+        cornerstoneWADOImageLoader.convertPALETTECOLOR(imageFrame, imageData.data, dataSet, metadata );
       }
       else if( photometricInterpretation === "YBR_FULL_422" )
       {

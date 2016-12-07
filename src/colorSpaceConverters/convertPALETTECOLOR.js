@@ -2,8 +2,29 @@
 
   "use strict";
 
-  function convertPALETTECOLOR( imageFrame, rgbaBuffer, dataSet ) {
-    var len=dataSet.int16('x00281101',0);
+  function convertPALETTECOLOR( imageFrame, rgbaBuffer, dataSet, metadata ) {
+
+    var len, start, bits, numPixels;
+    var buffer, rData, gData, bData;
+
+    if (dataSet === null && metadata !== void 0) {
+      len = metadata.redPaletteColorLookupTableDescriptor[0];
+      start = metadata.redPaletteColorLookupTableDescriptor[1];
+      bits = metadata.redPaletteColorLookupTableDescriptor[2];
+      numPixels = metadata.rows * metadata.columns;
+      rData = new Uint16Array( metadata.redPaletteColorLookupTable.buffer );
+      gData = new Uint16Array( metadata.greenPaletteColorLookupTable.buffer );
+      bData = new Uint16Array( metadata.bluePaletteColorLookupTable.buffer );
+    } else {
+      len = dataSet.int16('x00281101', 0);
+      start = dataSet.int16('x00281101', 1);
+      bits = dataSet.int16('x00281101', 2);
+      numPixels = dataSet.uint16('x00280010') * dataSet.uint16('x00280011');
+      buffer = dataSet.byteArray.buffer;
+      rData = new Uint16Array( buffer, dataSet.elements.x00281201.dataOffset, len );
+      gData = new Uint16Array( buffer, dataSet.elements.x00281202.dataOffset, len );
+      bData = new Uint16Array( buffer, dataSet.elements.x00281203.dataOffset, len );
+    }
 
     // Account for zero-values for the lookup table length
     //
@@ -15,16 +36,7 @@
       len = 65536;
     }
 
-    var start=dataSet.int16('x00281101',1);
-    var bits=dataSet.int16('x00281101',2);
     var shift = (bits===8 ? 0 : 8 );
-
-    var buffer = dataSet.byteArray.buffer;
-    var rData=new Uint16Array( buffer, dataSet.elements.x00281201.dataOffset, len );
-    var gData=new Uint16Array( buffer, dataSet.elements.x00281202.dataOffset, len );
-    var bData=new Uint16Array( buffer, dataSet.elements.x00281203.dataOffset, len );
-
-    var numPixels = dataSet.uint16('x00280010') * dataSet.uint16('x00280011');
     var palIndex=0;
     var rgbaIndex=0;
 
