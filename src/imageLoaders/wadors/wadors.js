@@ -136,7 +136,7 @@
       imagePromise.then(function (image) {
         deferred.resolve(image);
       }, function (error) {
-        deferred.reject(reason);
+        deferred.reject(error);
       });
 
     }).fail(function(reason) {
