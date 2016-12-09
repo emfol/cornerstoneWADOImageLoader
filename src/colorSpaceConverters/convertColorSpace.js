@@ -2,8 +2,9 @@
 
   "use strict";
 
-  function convertRGB(dataSet, decodedImageFrame, rgbaBuffer) {
-    var planarConfiguration = dataSet.uint16('x00280006');
+  function convertRGB(dataSet, decodedImageFrame, rgbaBuffer, metadata) {
+    var planarConfiguration = (dataSet ? dataSet.uint16('x00280006') : metadata.planarConfiguration) || 0;
+
     if(planarConfiguration === 0) {
       cornerstoneWADOImageLoader.convertRGBColorByPixel(decodedImageFrame, rgbaBuffer);
     } else {
@@ -46,7 +47,7 @@
     try {
       if (photometricInterpretation === "RGB" )
       {
-        convertRGB(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if (photometricInterpretation === "YBR_RCT")
       {

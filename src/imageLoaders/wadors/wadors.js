@@ -10,7 +10,7 @@
 
     var imageDataPromise, deferred = $.Deferred();
     var rows = image.instance.rows;
-    var columns = image.instance.rows;
+    var columns = image.instance.columns;
 
     image.render = cornerstone.renderColorImage;
     image.minPixelValue = 0;
