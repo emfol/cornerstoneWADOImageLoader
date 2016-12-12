@@ -3,7 +3,7 @@
   "use strict";
 
   function convertRGB(dataSet, decodedImageFrame, rgbaBuffer, metadata) {
-    var planarConfiguration = (dataSet ? dataSet.uint16('x00280006') : metadata.planarConfiguration) || 0;
+    var planarConfiguration = (dataSet === null && metadata !== void 0 ? metadata.planarConfiguration : dataSet.uint16('x00280006')) || 0;
 
     if(planarConfiguration === 0) {
       cornerstoneWADOImageLoader.convertRGBColorByPixel(decodedImageFrame, rgbaBuffer);
@@ -51,15 +51,15 @@
       }
       else if (photometricInterpretation === "YBR_RCT")
       {
-        convertRGB(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if (photometricInterpretation === "YBR_ICT")
       {
-        convertRGB(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if( photometricInterpretation === "PALETTE COLOR" )
       {
-        cornerstoneWADOImageLoader.convertPALETTECOLOR(imageFrame, imageData.data, dataSet, metadata );
+        cornerstoneWADOImageLoader.convertPALETTECOLOR(imageFrame, imageData.data, dataSet, metadata);
       }
       else if( photometricInterpretation === "YBR_FULL_422" )
       {
