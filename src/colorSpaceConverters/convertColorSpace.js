@@ -12,8 +12,9 @@
     }
   }
 
-  function convertYBRFull(dataSet, decodedImageFrame, rgbaBuffer) {
-    var planarConfiguration = dataSet.uint16('x00280006');
+  function convertYBRFull(dataSet, decodedImageFrame, rgbaBuffer, metadata) {
+    var planarConfiguration = (dataSet === null && metadata !== void 0 ? metadata.planarConfiguration : dataSet.uint16('x00280006')) || 0;
+
     if(planarConfiguration === 0) {
       cornerstoneWADOImageLoader.convertYBRFullByPixel(decodedImageFrame, rgbaBuffer);
     } else {
@@ -63,11 +64,11 @@
       }
       else if( photometricInterpretation === "YBR_FULL_422" )
       {
-        convertYBRFull(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else if(photometricInterpretation === "YBR_FULL" )
       {
-        convertYBRFull(dataSet, imageFrame, imageData.data);
+        convertRGB(dataSet, imageFrame, imageData.data, metadata);
       }
       else
       {
