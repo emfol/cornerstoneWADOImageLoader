@@ -6,16 +6,36 @@
   var canvas = document.createElement('canvas');
   var lastImageIdDrawn = '';
 
+  function getRescaleSlopeAndIntercept(image) {
+    // NOTE - we default these to an identity transform since modality LUT
+    // module is not required for all SOP Classes
+    var result = {
+        intercept : 0.0,
+        slope: 1.0
+    };
+
+    if((image.intercept != null) && (image.slope != null)) {
+      result.intercept = image.intercept;
+      result.slope = image.slope;
+    }
+
+    return result;
+  }
+
   function makeColorImage(image, storedPixelData) {
 
     var imageDataPromise, deferred = $.Deferred();
     var rows = image.instance.rows;
     var columns = image.instance.columns;
+    var rescaleSlopeAndIntercept = getRescaleSlopeAndIntercept(image);
 
     image.render = cornerstone.renderColorImage;
     image.minPixelValue = 0;
     image.maxPixelValue = 255;
     image.invert = false;
+    image.slope = rescaleSlopeAndIntercept.slope;
+    image.intercept = rescaleSlopeAndIntercept.intercept;
+
 
     lastImageIdDrawn = void 0;
 
@@ -75,10 +95,15 @@
   function makeGrayscaleImage(image, storedPixelData) {
     var deferred = $.Deferred();
     var minMax = cornerstoneWADOImageLoader.getMinMax(storedPixelData);
+    var rescaleSlopeAndIntercept = getRescaleSlopeAndIntercept(image);
+
     image.minPixelValue = minMax.min;
     image.maxPixelValue = minMax.max;
     image.render = cornerstone.renderGrayscaleImage;
     image.invert = (image.instance.photometricInterpretation === 'MONOCHROME1');
+    image.slope = rescaleSlopeAndIntercept.slope;
+    image.intercept = rescaleSlopeAndIntercept.intercept;
+    
     image.getPixelData = function() {
       return storedPixelData;
     };
