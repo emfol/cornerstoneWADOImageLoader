@@ -30,6 +30,7 @@
     var rescaleSlopeAndIntercept = getRescaleSlopeAndIntercept(image);
 
     image.render = cornerstone.renderColorImage;
+    image.color = true;
     image.minPixelValue = 0;
     image.maxPixelValue = 255;
     image.invert = false;
